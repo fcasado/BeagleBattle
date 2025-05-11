@@ -9,4 +9,10 @@ class Settings:
         self.bg_color = (255,255,255)
 
         # Configurações do beagle
-        self.beagle_speed = 3
+        self.beagle_speed = 3.5
+
+        # Configurações da bala (osso)
+        self.bullet_speed = 7.0
+        self.bullet_width = 3
+        self.bullet_height = 15
+        self.bullet_color = (150, 75, 0)

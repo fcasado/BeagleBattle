@@ -2,6 +2,7 @@ import sys
 import pygame
 from settings import Settings
 from beagle import Beagle
+from bullet import Bullet
 
 class BeagleBattle:
     """ Classe do jogo uma batalha Beagle """
@@ -11,24 +12,26 @@ class BeagleBattle:
         self.settings = Settings()
 
         # Tela cheia
-        self.screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
-        self.settings.screen_width = self.screen.get_rect().width
-        self.settings.screen_height = self.screen.get_rect().height
+        #self.screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+        #self.settings.screen_width = self.screen.get_rect().width
+        #self.settings.screen_height = self.screen.get_rect().height
 
         pygame.display.set_caption("Uma Bigada")
         self.clock = pygame.time.Clock()
         
         # Tela 1200x800 - Vide settings
-        #self.screen = pygame.display.set_mode(
-        #    (self.settings.screen_width, self.settings.screen_height)
-        #)
+        self.screen = pygame.display.set_mode(
+            (self.settings.screen_width, self.settings.screen_height)
+        )
         self.beagle = Beagle(self)
+        self.bullets = pygame.sprite.Group()
 
     def run_game(self):
         """ Inicia o loop principal do jogo """
         while True:
             self._check_events()
             self.beagle.update()
+            self.bullets.update()
             self._update_screen()
             self.clock.tick(60)
     
@@ -52,6 +55,8 @@ class BeagleBattle:
             self.beagle.moving_left = True
         elif event.key == pygame.K_q:
             sys.exit()
+        elif event.key == pygame.K_SPACE:
+            self._fire_bullet()
 
     def _check_keyup_events(self, event):
         """ Responde a teclas soltas """
@@ -60,10 +65,18 @@ class BeagleBattle:
         elif event.key == pygame.K_LEFT:
             self.beagle.moving_left = False
     
+    def _fire_bullet(self):
+        """ Cria um novo projétil e o adiciona ao grupo projéteis """
+        new_bullet = Bullet(self)
+        self.bullets.add(new_bullet)
+
     def _update_screen(self):
         """ Atualiza as imagens na tela e muda para a nova tela """
         # Redesenha a tela durante cada passagem pelo loop
-        self.screen.fill(self.settings.bg_color)        
+        self.screen.fill(self.settings.bg_color)
+        # Mostra as balas
+        for bullet in self.bullets.sprites():
+            bullet.draw_bullet()
         # Coloca o personagem na tela
         self.beagle.blitme()        
         # Deixa a tela desenhada mais recente visível

@@ -31,13 +31,28 @@ class BeagleBattle:
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RIGHT:
-                    # move o personagem para a direita                    
-                    self.beagle.moving_right = True
+                self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_RIGHT:
-                    self.beagle.moving_right = False
+                self._check_keyup_events(event)
 
+    def _check_keydown_events(self, event):
+        """ Responde a teclas pressionadas """
+        if event.key == pygame.K_RIGHT:
+            # move o personagem para a direita                    
+            self.beagle.moving_right = True
+        elif event.key == pygame.K_LEFT:
+            # move o beagle para a esquerda
+            self.beagle.moving_left = True
+        elif event.key == pygame.K_q:
+            sys.exit()
+
+    def _check_keyup_events(self, event):
+        """ Responde a teclas soltas """
+        if event.key == pygame.K_RIGHT:
+            self.beagle.moving_right = False
+        elif event.key == pygame.K_LEFT:
+            self.beagle.moving_left = False
+    
     def _update_screen(self):
         """ Atualiza as imagens na tela e muda para a nova tela """
         # Redesenha a tela durante cada passagem pelo loop

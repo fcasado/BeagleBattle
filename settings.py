@@ -13,6 +13,6 @@ class Settings:
 
         # Configurações da bala (osso)
         self.bullet_speed = 7.0
-        self.bullet_width = 3
+        self.bullet_width = 6
         self.bullet_height = 15
         self.bullet_color = (150, 75, 0)

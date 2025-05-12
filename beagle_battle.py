@@ -3,6 +3,7 @@ import pygame
 from settings import Settings
 from beagle import Beagle
 from bullet import Bullet
+from osso_bullet import OssoBullet
 
 class BeagleBattle:
     """ Classe do jogo uma batalha Beagle """
@@ -16,13 +17,14 @@ class BeagleBattle:
         #self.settings.screen_width = self.screen.get_rect().width
         #self.settings.screen_height = self.screen.get_rect().height
 
-        pygame.display.set_caption("Uma Bigada")
-        self.clock = pygame.time.Clock()
-        
         # Tela 1200x800 - Vide settings
         self.screen = pygame.display.set_mode(
             (self.settings.screen_width, self.settings.screen_height)
         )
+        
+        pygame.display.set_caption("Uma Bigada")
+        self.clock = pygame.time.Clock()
+                
         self.beagle = Beagle(self)
         self.bullets = pygame.sprite.Group()
 
@@ -32,6 +34,13 @@ class BeagleBattle:
             self._check_events()
             self.beagle.update()
             self.bullets.update()
+
+            # Descarta as balas perdidas
+            for bullet in self.bullets.copy():
+                if bullet.rect.bottom <= 0:
+                    self.bullets.remove(bullet)
+                print(len(self.bullets))
+
             self._update_screen()
             self.clock.tick(60)
     
@@ -55,8 +64,10 @@ class BeagleBattle:
             self.beagle.moving_left = True
         elif event.key == pygame.K_q:
             sys.exit()
-        elif event.key == pygame.K_SPACE:
+        elif event.key == pygame.K_c:
             self._fire_bullet()
+        elif event.key == pygame.K_SPACE:
+            self._fire_osso()
 
     def _check_keyup_events(self, event):
         """ Responde a teclas soltas """
@@ -70,6 +81,11 @@ class BeagleBattle:
         new_bullet = Bullet(self)
         self.bullets.add(new_bullet)
 
+    def _fire_osso(self):
+        """ Cria um novo osso projétil e o adiciona ao grupo projéteis """
+        new_osso_bullet = OssoBullet(self)
+        self.bullets.add(new_osso_bullet)
+
     def _update_screen(self):
         """ Atualiza as imagens na tela e muda para a nova tela """
         # Redesenha a tela durante cada passagem pelo loop
@@ -77,6 +93,9 @@ class BeagleBattle:
         # Mostra as balas
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
+        # Mostra os ossos
+        for osso_bullet in self.bullets.sprites():
+            osso_bullet.draw_bullet()
         # Coloca o personagem na tela
         self.beagle.blitme()        
         # Deixa a tela desenhada mais recente visível

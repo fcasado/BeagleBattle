@@ -30,8 +30,3 @@ class OssoBullet(Sprite):
         """ Desenha a bala na tela """
         #pygame.draw.rect(self.screen, self.color, self.rect)
         self.screen.blit(self.image, self.rect)
-        
-
-    #def blitme(self):
-    #    """ Desenha o osso em sua localização atual """
-    #    self.screen.blit(self.image, self.rect)

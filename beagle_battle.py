@@ -4,6 +4,7 @@ from settings import Settings
 from beagle import Beagle
 from bullet import Bullet
 from osso_bullet import OssoBullet
+from bad_dog import BadDog
 
 class BeagleBattle:
     """ Classe do jogo uma batalha Beagle """
@@ -27,6 +28,9 @@ class BeagleBattle:
                 
         self.beagle = Beagle(self)
         self.bullets = pygame.sprite.Group()
+        self.bad_dogs = pygame.sprite.Group()
+
+        self._create_pack()
 
     def run_game(self):
         """ Inicia o loop principal do jogo """
@@ -102,9 +106,18 @@ class BeagleBattle:
         for osso_bullet in self.bullets.sprites():
             osso_bullet.draw_bullet()
         # Coloca o personagem na tela
-        self.beagle.blitme()        
+        self.beagle.blitme()
+        # Coloca os vilões na tela
+        self.bad_dogs.draw(self.screen)       
         # Deixa a tela desenhada mais recente visível
         pygame.display.flip()
+
+    def _create_pack(self):
+        """ Cria  a matilha de cães malvadões """
+
+        # Cria um bad dog
+        bad_dog = BadDog(self)
+        self.bad_dogs.add(bad_dog)
         
 
 if __name__ == '__main__':

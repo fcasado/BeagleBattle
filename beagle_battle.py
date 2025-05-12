@@ -32,15 +32,8 @@ class BeagleBattle:
         """ Inicia o loop principal do jogo """
         while True:
             self._check_events()
-            self.beagle.update()
-            self.bullets.update()
-
-            # Descarta as balas perdidas
-            for bullet in self.bullets.copy():
-                if bullet.rect.bottom <= 0:
-                    self.bullets.remove(bullet)
-                print(len(self.bullets))
-
+            self.beagle.update()     
+            self._update_bullets()
             self._update_screen()
             self.clock.tick(60)
     
@@ -57,7 +50,7 @@ class BeagleBattle:
     def _check_keydown_events(self, event):
         """ Responde a teclas pressionadas """
         if event.key == pygame.K_RIGHT:
-            # move o personagem para a direita                    
+            # move o personagem para a direita
             self.beagle.moving_right = True
         elif event.key == pygame.K_LEFT:
             # move o beagle para a esquerda
@@ -78,13 +71,25 @@ class BeagleBattle:
     
     def _fire_bullet(self):
         """ Cria um novo projétil e o adiciona ao grupo projéteis """
-        new_bullet = Bullet(self)
-        self.bullets.add(new_bullet)
+        if len(self.bullets) < self.settings.bullets_allowed:
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
 
     def _fire_osso(self):
         """ Cria um novo osso projétil e o adiciona ao grupo projéteis """
-        new_osso_bullet = OssoBullet(self)
-        self.bullets.add(new_osso_bullet)
+        if len(self.bullets) < self.settings.bullets_allowed:
+            new_osso_bullet = OssoBullet(self)
+            self.bullets.add(new_osso_bullet)
+
+    def _update_bullets(self):
+        """ Atualiza a posição dos projéteis e descarta os antigos """
+        # Atualiza as posições dos projéteis
+        self.bullets.update()
+
+        # Descarta as balas antigas
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
 
     def _update_screen(self):
         """ Atualiza as imagens na tela e muda para a nova tela """

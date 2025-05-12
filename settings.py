@@ -16,3 +16,6 @@ class Settings:
         self.bullet_width = 6
         self.bullet_height = 15
         self.bullet_color = (150, 75, 0)
+
+        # Configurações de cadencia de tiro
+        self.bullets_allowed = 10

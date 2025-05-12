@@ -36,8 +36,9 @@ class BeagleBattle:
         """ Inicia o loop principal do jogo """
         while True:
             self._check_events()
-            self.beagle.update()     
+            self.beagle.update()
             self._update_bullets()
+            self._update_bad_dogs()
             self._update_screen()
             self.clock.tick(60)
     
@@ -95,6 +96,9 @@ class BeagleBattle:
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
+        # Verifica se acertaram o alvo e elimina a bala e o alvo
+        collisions = pygame.sprite.groupcollide(self.bullets, self.bad_dogs, True, True)
+
     def _update_screen(self):
         """ Atualiza as imagens na tela e muda para a nova tela """
         # Redesenha a tela durante cada passagem pelo loop
@@ -115,10 +119,46 @@ class BeagleBattle:
     def _create_pack(self):
         """ Cria  a matilha de cães malvadões """
 
-        # Cria um bad dog
+        # Cria um bad dog e adiciona ate preencher a linha usando como distancia o tamanho de um bad_dog
         bad_dog = BadDog(self)
-        self.bad_dogs.add(bad_dog)
-        
+        bad_width, bad_height = bad_dog.rect.size
+
+        current_x, current_y = bad_width, bad_height
+        while current_y < (self.settings.screen_height - 3 * bad_height):
+            while current_x < (self.settings.screen_width - 2 * bad_width):
+                self._create_bad(current_x, current_y)
+                current_x += 2 * bad_width
+            
+            # Termina a fileira, ajusta o x e incrementa o y
+            current_x = bad_width
+            current_y += 2 * bad_height
+           
+
+    def _create_bad(self, x_position, y_position):
+        """ Cria um cão malvadão """
+        new_bad = BadDog(self)
+        new_bad.x = x_position
+        new_bad.rect.x = x_position
+        new_bad.rect.y = y_position
+        self.bad_dogs.add(new_bad)
+
+    def _update_bad_dogs(self):
+        """ Verifica se a matillha esta na borda e atualiza as posições de todos os malvadões """
+        self._check_bad_pack_edges()
+        self.bad_dogs.update()
+
+    def _check_bad_pack_edges(self):
+        """ Responde apropriadamente se algum bad_dog chegou na borda da tela """
+        for bad_dog in self.bad_dogs.sprites():
+            if bad_dog.check_edges():
+                self._change_bad_pack_direction()
+                break
+    
+    def _change_bad_pack_direction(self):
+        """ Faz toda a frota descer e mudar de direção """
+        for bad_dog in self.bad_dogs.sprites():
+            bad_dog.rect.y += self.settings.bad_pack_drop_speed
+        self.settings.bad_pack_direction *= -1
 
 if __name__ == '__main__':
     # Cria uma instancia do jogo e execute o jogo

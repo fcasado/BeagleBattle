@@ -1,10 +1,13 @@
 import sys
+from time import sleep
 import pygame
 from settings import Settings
+from game_stats import GameStats
 from beagle import Beagle
 from bullet import Bullet
 from osso_bullet import OssoBullet
 from bad_dog import BadDog
+
 
 class BeagleBattle:
     """ Classe do jogo uma batalha Beagle """
@@ -21,11 +24,14 @@ class BeagleBattle:
         # Tela 1200x800 - Vide settings
         self.screen = pygame.display.set_mode(
             (self.settings.screen_width, self.settings.screen_height)
-        )
-        
+        )        
         pygame.display.set_caption("Uma Bigada")
+        
+        # Cria uma instancia para armazenar as estatisticas do jogo
+        self.stats = GameStats(self)
+
         self.clock = pygame.time.Clock()
-                
+        
         self.beagle = Beagle(self)
         self.bullets = pygame.sprite.Group()
         self.bad_dogs = pygame.sprite.Group()
@@ -99,6 +105,10 @@ class BeagleBattle:
         # Verifica se acertaram o alvo e elimina a bala e o alvo
         collisions = pygame.sprite.groupcollide(self.bullets, self.bad_dogs, True, True)
 
+        if not self.bad_dogs:
+            self.bullets.empty()
+            self._create_pack()
+
     def _update_screen(self):
         """ Atualiza as imagens na tela e muda para a nova tela """
         # Redesenha a tela durante cada passagem pelo loop
@@ -147,6 +157,10 @@ class BeagleBattle:
         self._check_bad_pack_edges()
         self.bad_dogs.update()
 
+        # Detecta colisão entre bad_dog e o beagle
+        if pygame.sprite.spritecollideany(self.beagle,self.bad_dogs):
+            self._beagle_bited()
+
     def _check_bad_pack_edges(self):
         """ Responde apropriadamente se algum bad_dog chegou na borda da tela """
         for bad_dog in self.bad_dogs.sprites():
@@ -159,6 +173,23 @@ class BeagleBattle:
         for bad_dog in self.bad_dogs.sprites():
             bad_dog.rect.y += self.settings.bad_pack_drop_speed
         self.settings.bad_pack_direction *= -1
+
+    def _beagle_bited(self):
+        """ Responde ao Beagle sendo atacado pelos bad dogs """
+        # Decrementa o numero de vidas do Beagle (beagles_left)
+        self.stats.beagles_left -= 1
+
+        # Limpa os bad dogs e as balas restantes
+        self.bullets.empty()
+        self.bad_dogs.empty()
+
+        # Cria uma nova matilha de bad dogs e centraliza o beagle
+        self._create_pack()
+        self.beagle.center_beagle()
+
+        # Pausa rapida para reiniciar
+        sleep(0.5)
+
 
 if __name__ == '__main__':
     # Cria uma instancia do jogo e execute o jogo

@@ -10,10 +10,11 @@ class Settings:
 
         # Configurações do beagle
         self.beagle_speed = 3.5
+        self.beagles_limit = 3
 
         # Configurações da bala (osso)
         self.bullet_speed = 7.0
-        self.bullet_width = 6
+        self.bullet_width = 1200
         self.bullet_height = 15
         self.bullet_color = (150, 75, 0)
 
@@ -21,7 +22,7 @@ class Settings:
         self.bullets_allowed = 10
 
         # Configurações dos malvadões (Bad Dogs)
-        self.bad_speed = 1.0
+        self.bad_speed = 8.0
         self.bad_pack_drop_speed = 10
 
         # Direção dos malvadões 1 = direita, -1 = esquerda (Bad Dogs)

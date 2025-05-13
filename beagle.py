@@ -10,7 +10,7 @@ class Beagle:
         self.screen_rect = bb_game.screen.get_rect()
 
         # Sobe a imagem do beagle
-        self.image = pygame.image.load('images/beagle1a.bmp')
+        self.image = pygame.image.load('images/beagle3.bmp')
         self.rect = self.image.get_rect()
 
         # Começa cada personagem no centro inferior da tela
@@ -37,3 +37,8 @@ class Beagle:
     def blitme(self):
         """ Desenha o personagem em sua localização atual """
         self.screen.blit(self.image, self.rect)
+
+    def center_beagle(self):
+        """ Centraliza o Beagle na tela """
+        self.rect.midbottom = self.screen_rect.midbottom
+        self.x = float(self.rect.x)

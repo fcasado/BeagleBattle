@@ -1,10 +1,16 @@
 ### Uma Bigada - Beagle Battle
 
-Controles:
+* Feito por Rapha e Pai ;)
 
-python beagle_battle.py - start the game
-q - exit
-<- - Move a esquerda
--> - Move a direita
-SPACE - Tiro de coco
-b - Tiro de ossinhos
+- Controles:
+
+Usage: python beagle_battle.py
+
+
+Keys:
+- "q" - exit
+- "<-" - Move a esquerda
+- "->" - Move a direita
+- "SPACE" - Tiro de Ossos
+- "c" - Tiro de snacks
+- "j" - jogar

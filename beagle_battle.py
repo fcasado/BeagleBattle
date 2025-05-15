@@ -7,7 +7,7 @@ from beagle import Beagle
 from bullet import Bullet
 from osso_bullet import OssoBullet
 from bad_dog import BadDog
-
+from button import Button
 
 class BeagleBattle:
     """ Classe do jogo uma batalha Beagle """
@@ -38,8 +38,11 @@ class BeagleBattle:
 
         self._create_pack()
 
-        # Inicializa o jogo em um estado ativo
-        self.game_active = True 
+        # Inicializa o jogo em um estado inativo
+        self.game_active = False
+
+        # Cria o botão Play
+        self.play_button = Button(self, "Jogar")
 
     def run_game(self):
         """ Inicia o loop principal do jogo """
@@ -62,6 +65,9 @@ class BeagleBattle:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                self._check_play_button(mouse_pos)
 
     def _check_keydown_events(self, event):
         """ Responde a teclas pressionadas """
@@ -77,6 +83,9 @@ class BeagleBattle:
             self._fire_bullet()
         elif event.key == pygame.K_SPACE:
             self._fire_osso()
+        elif event.key == pygame.K_j:
+            # Inicia a Jogo com "j"
+            self._start_game()
 
     def _check_keyup_events(self, event):
         """ Responde a teclas soltas """
@@ -127,7 +136,10 @@ class BeagleBattle:
         # Coloca o personagem na tela
         self.beagle.blitme()
         # Coloca os vilões na tela
-        self.bad_dogs.draw(self.screen)       
+        self.bad_dogs.draw(self.screen)
+        # Desenha o botão Jogar na tela se o jogo estiver inativo
+        if not self.game_active:
+            self.play_button.draw_button()
         # Deixa a tela desenhada mais recente visível
         pygame.display.flip()
 
@@ -201,6 +213,7 @@ class BeagleBattle:
             sleep(0.5)
         else:
             self.game_active = False
+            pygame.mouse.set_visible(True)
 
     def _check_bad_dogs_bottom(self):
         """ Verifica se algum bad_dog chegou até a parte inferior da tela """
@@ -209,6 +222,28 @@ class BeagleBattle:
                 # Trata isso como se o bad_dog tivesse mordido o Beagle
                 self._beagle_bited()
                 break
+    
+    def _check_play_button(self, mouse_pos):
+        """ Inicia o jogo novo quando o jogador clica em Jogar """
+        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+        if button_clicked and not self.game_active:
+            # Zera as estatisticas do Jogo
+            self._start_game()
+
+            # Descarta qualquer projeteis e bad_dogs restantes
+            self.bullets.empty()
+            self.bad_dogs.empty()
+
+            # Cria uma nova matilha e centraliza o Beagle
+            self._create_pack()
+            self.beagle.center_beagle()
+    
+    def _start_game(self):
+        """ Inicializa o jogo e limpa as estatisticas """
+        self.stats.reset_stats()
+        self.game_active = True
+        # Oculta o cursor do mouse
+        pygame.mouse.set_visible(False)
 
 
 if __name__ == '__main__':

@@ -38,13 +38,18 @@ class BeagleBattle:
 
         self._create_pack()
 
+        # Inicializa o jogo em um estado ativo
+        self.game_active = True 
+
     def run_game(self):
         """ Inicia o loop principal do jogo """
         while True:
             self._check_events()
-            self.beagle.update()
-            self._update_bullets()
-            self._update_bad_dogs()
+            if self.game_active:
+                self.beagle.update()
+                self._update_bullets()
+                self._update_bad_dogs()
+            
             self._update_screen()
             self.clock.tick(60)
     
@@ -160,6 +165,9 @@ class BeagleBattle:
         # Detecta colisão entre bad_dog e o beagle
         if pygame.sprite.spritecollideany(self.beagle,self.bad_dogs):
             self._beagle_bited()
+        
+        # Procura por bad_dogs chegando a parte inferior da tela
+        self._check_bad_dogs_bottom()
 
     def _check_bad_pack_edges(self):
         """ Responde apropriadamente se algum bad_dog chegou na borda da tela """
@@ -169,26 +177,38 @@ class BeagleBattle:
                 break
     
     def _change_bad_pack_direction(self):
-        """ Faz toda a frota descer e mudar de direção """
+        """ Faz toda a matilha descer e mudar de direção """
         for bad_dog in self.bad_dogs.sprites():
             bad_dog.rect.y += self.settings.bad_pack_drop_speed
         self.settings.bad_pack_direction *= -1
 
     def _beagle_bited(self):
         """ Responde ao Beagle sendo atacado pelos bad dogs """
-        # Decrementa o numero de vidas do Beagle (beagles_left)
-        self.stats.beagles_left -= 1
+        
+        if self.stats.beagles_left > 0:
+            # Decrementa o numero de vidas do Beagle (beagles_left)
+            self.stats.beagles_left -= 1
 
-        # Limpa os bad dogs e as balas restantes
-        self.bullets.empty()
-        self.bad_dogs.empty()
+            # Limpa os bad dogs e as balas restantes
+            self.bullets.empty()
+            self.bad_dogs.empty()
 
-        # Cria uma nova matilha de bad dogs e centraliza o beagle
-        self._create_pack()
-        self.beagle.center_beagle()
+            # Cria uma nova matilha de bad dogs e centraliza o beagle
+            self._create_pack()
+            self.beagle.center_beagle()
 
-        # Pausa rapida para reiniciar
-        sleep(0.5)
+            # Pausa rapida para reiniciar
+            sleep(0.5)
+        else:
+            self.game_active = False
+
+    def _check_bad_dogs_bottom(self):
+        """ Verifica se algum bad_dog chegou até a parte inferior da tela """
+        for bad_dog in self.bad_dogs.sprites():
+            if bad_dog.rect.bottom >= self.settings.screen_height:
+                # Trata isso como se o bad_dog tivesse mordido o Beagle
+                self._beagle_bited()
+                break
 
 
 if __name__ == '__main__':

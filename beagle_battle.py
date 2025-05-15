@@ -120,8 +120,10 @@ class BeagleBattle:
         collisions = pygame.sprite.groupcollide(self.bullets, self.bad_dogs, True, True)
 
         if not self.bad_dogs:
+            # Destroi os projeteis existentes e cria a nova frota
             self.bullets.empty()
             self._create_pack()
+            self.settings.increase_speed()
 
     def _update_screen(self):
         """ Atualiza as imagens na tela e muda para a nova tela """
@@ -227,6 +229,8 @@ class BeagleBattle:
         """ Inicia o jogo novo quando o jogador clica em Jogar """
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.game_active:
+            # Redefine as  configurações do jogo
+            self.settings.initialize_dynamic_settings()
             # Zera as estatisticas do Jogo
             self._start_game()
 

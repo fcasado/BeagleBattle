@@ -25,7 +25,7 @@ class BeagleBattle:
         self.screen = pygame.display.set_mode(
             (self.settings.screen_width, self.settings.screen_height)
         )        
-        pygame.display.set_caption("Uma Bigada")
+        pygame.display.set_caption("Beagle Battle - Uma Bigada")
         
         # Cria uma instancia para armazenar as estatisticas do jogo
         self.stats = GameStats(self)
